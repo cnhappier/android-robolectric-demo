@@ -1,0 +1,62 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    publishNonDefault true
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    testCompile libraries.junit
+    testCompile libraries.robolectric
+    testCompile libraries.mockito
+    compile 'com.google.code.gson:gson:2.4'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+apply plugin: 'maven-publish'
+version = versions.internal_sdk
+
+publishing {
+    repositories {
+        maven {
+            credentials {
+                username '<user>'
+                password '<password>'
+            }
+
+            if (project.version.endsWith('-SNAPSHOT')) {
+                url "<snapshot-repo>"
+            } else {
+                url "<release-repo>"
+            }
+        }
+    }
+
+    publications {
+        mavenJar(MavenPublication) {
+            groupId 'com.example.library'
+            artifactId 'test-sdk'
+            version '0.1.0-SNAPSHOT'
+            artifact("$buildDir/libs/test-sdk-0.1.0-SNAPSHOT.jar")
+        }
+    }
+}
